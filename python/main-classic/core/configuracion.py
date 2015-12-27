@@ -11,7 +11,7 @@ from core import logger
 
 logger.info("[configuracion.py] init")
 
-def mainlist(params,url,category):
+def mainlist(item):
     logger.info("[configuracion.py] mainlist")
     
     config.open_settings( )

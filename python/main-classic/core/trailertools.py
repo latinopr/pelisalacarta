@@ -27,10 +27,10 @@ CHANNELNAME = "trailertools"
 DEBUG = True
 IMAGES_PATH = xbmc.translatePath( os.path.join( config.get_data_path(), 'resources' , 'images'  ) )
 
-def mainlist(params,url,category):
+def mainlist(item):
     logger.info("[trailertools.py] mainlist")
     titulo = ""
-    listavideos = GetTrailerbyKeyboard(titulo,category)
+    listavideos = GetTrailerbyKeyboard(item.title,item.category)
     if len(listavideos)>0:
         for video in listavideos:
             titulo = video[1]
@@ -42,11 +42,12 @@ def mainlist(params,url,category):
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_NONE )
     xbmcplugin.endOfDirectory( handle=int( sys.argv[ 1 ] ), succeeded=True )        
     
-def buscartrailer(params,url,category):
+def buscartrailer(item):
     print "[trailertools.py] Modulo: buscartrailer()"
+    itemlist=[]
     thumbnail = ""
     solo = "false"
-    videotitle = title = urllib.unquote_plus( params.get("title") ).strip()
+    videotitle = title = urllib.unquote_plus( item.title ).strip()
     if ":]" in videotitle:
         solo = "true"
         videotitle = re.sub("\[[^\]]+\]","",videotitle).strip()
@@ -57,23 +58,18 @@ def buscartrailer(params,url,category):
     
         listavideos = GetTrailerbyKeyboard(videotitle.strip(),category)
     else:
-        listavideos = gettrailer(videotitle.strip().strip(),category,solo)
+        listavideos = gettrailer(videotitle.strip().strip(),item.category,solo)
     
     if len(listavideos)>0:
         for video in listavideos:
+        
             titulo = video[1]
             url        = video[0]
             thumbnail  = video[2]
             duracion = video[3]
+            itemlist.append(Item(title= titulo, channel="trailertools", action="youtubeplay", category="youtube", url= url, thumbnail = thumbnail, duration=duration, folder=False))
             xbmctools.addnewvideo( "trailertools" , "youtubeplay" , category , "youtube" ,  titulo , url , thumbnail , "Ver Video","",duracion )
-    
-    xbmctools.addnewfolder( CHANNELNAME , "buscartrailer" , category , config.get_localized_string(30111)+" "+videotitle , url , os.path.join(IMAGES_PATH, 'trailertools.png'), "" ) #"Insatisfecho?, busca otra vez : "        
-    # Propiedades
-    xbmcplugin.setPluginCategory( handle=int( sys.argv[ 1 ] ), category=category )
-    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_NONE )
-    xbmcplugin.endOfDirectory( handle=int( sys.argv[ 1 ] ), succeeded=True )
-    
-    
+
 def GetFrom_Trailersdepeliculas(titulovideo):
     print "[trailertools.py] Modulo: GetFrom_Trailersdepeliculas(titulo = %s)"  % titulovideo
     devuelve = []

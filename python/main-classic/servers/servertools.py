@@ -103,8 +103,7 @@ def find_video_items(item=None, data=None, channel=""):
         scrapedurl = video[1]
         server = video[2]
         thumbnail = "http://media.tvalacarta.info/servers/server_"+server+".png"
-        
-        itemlist.append( Item(channel=item.channel, title=scrapedtitle , action="play" , server=server, page=item.page, url=scrapedurl, thumbnail=thumbnail, show=item.show , plot=item.plot , folder=False) )
+        itemlist.append( item.clone(title=scrapedtitle , action="play" , server=server, url=scrapedurl, thumbnail=thumbnail, folder=False) )
 
     return itemlist
 

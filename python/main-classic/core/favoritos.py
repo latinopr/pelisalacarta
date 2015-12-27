@@ -47,14 +47,11 @@ def mainlist(item):
 
         try:
             # Lee el bookmark
-            canal,titulo,thumbnail,plot,server,url,fulltitle = readbookmark(fichero)
-            if canal=="":
-                canal="favoritos"
-
-            # Crea la entrada
-            # En extra va el nombre del fichero para poder borrarlo
-            ## <-- Añado fulltitle con el titulo de la peli
-            itemlist.append( Item( channel=canal , action="play" , url=url , server=server, title=fulltitle, thumbnail=thumbnail, plot=plot, fanart=thumbnail, extra=os.path.join( BOOKMARK_PATH, fichero ), fulltitle=fulltitle, folder=False ))
+            item = readbookmark(fichero)
+            item.channel="favoritos"
+            item.action = "play"
+            item.extra = os.path.join( BOOKMARK_PATH, fichero )
+            itemlist.append(item)
         except:
             for line in sys.exc_info():
                 logger.error( "%s" % line )
@@ -72,55 +69,73 @@ def readbookmark(filename,readpath=BOOKMARK_PATH):
         # Lee el fichero de configuracion
         logger.info("[favoritos.py] filepath="+filepath)
         bookmarkfile = open(filepath)
-    lines = bookmarkfile.readlines()
-
-    try:
-        titulo = urllib.unquote_plus(lines[0].strip())
-    except:
-        titulo = lines[0].strip()
     
-    try:
-        url = urllib.unquote_plus(lines[1].strip())
-    except:
-        url = lines[1].strip()
-    
-    try:
-        thumbnail = urllib.unquote_plus(lines[2].strip())
-    except:
-        thumbnail = lines[2].strip()
-    
-    try:
-        server = urllib.unquote_plus(lines[3].strip())
-    except:
-        server = lines[3].strip()
-        
-    try:
-        plot = urllib.unquote_plus(lines[4].strip())
-    except:
-        plot = lines[4].strip()
-
-    ## Campos fulltitle y canal añadidos
-    if len(lines)>=6:
-        try:
-            fulltitle = urllib.unquote_plus(lines[5].strip())
-        except:
-            fulltitle = lines[5].strip()
+    #Formato JSON
+    if filename.endswith(".json"):
+      logger.info("[favoritos.py] Formato: JSON")
+      import json
+      file = bookmarkfile.read()
+      bookmarkfile.close()
+      JSONFile = json.loads(file)
+      item = Item().fromjson(file)
+      
     else:
-        fulltitle=titulo
+      #No es json
+      lines = bookmarkfile.readlines()
+      bookmarkfile.close()
+      logger.info("[favoritos.py] Formato: TXT, Lineas: " + str(len(lines)))
 
-    if len(lines)>=7:
-        try:
-            canal = urllib.unquote_plus(lines[6].strip())
-        except:
-            canal = lines[6].strip()
-    else:
-        canal=""
+      item = Item()
+      try:
+          item.title = urllib.unquote_plus(lines[0].strip())
+      except:
+          item.title = lines[0].strip()
+      
+      try:
+          item.url = urllib.unquote_plus(lines[1].strip())
+      except:
+          item.url = lines[1].strip()
+      
+      try:
+          item.thumbnail = urllib.unquote_plus(lines[2].strip())
+      except:
+          item.thumbnail = lines[2].strip()
+      
+      try:
+          item.server = urllib.unquote_plus(lines[3].strip())
+      except:
+          item.server = lines[3].strip()
+          
+      try:
+          item.plot = urllib.unquote_plus(lines[4].strip())
+      except:
+          item.plot = lines[4].strip()
 
-    bookmarkfile.close();
+      ## Campos fulltitle y canal añadidos
+      if len(lines)>=6:
+          try:
+              item.fulltitle = urllib.unquote_plus(lines[5].strip())
+          except:
+              item.fulltitle = lines[5].strip()
+      else:
+          item.fulltitle=item.title
 
-    return canal,titulo,thumbnail,plot,server,url,fulltitle
+      if len(lines)>=7:
+          try:
+              item.channel = urllib.unquote_plus(lines[6].strip())
+          except:
+              item.channel = lines[6].strip()
+      else:
+          item.channel=""
 
-def savebookmark(canal=CHANNELNAME,titulo="",url="",thumbnail="",server="",plot="",fulltitle="",savepath=BOOKMARK_PATH):
+      #Si no es JSON lo elimina
+      deletebookmark(filename)
+      #Y lo vuelve a crear, esta vez en json
+      savebookmark(item)
+
+    return item
+
+def savebookmark(item,savepath=BOOKMARK_PATH):
     logger.info("[favoritos.py] savebookmark(path="+savepath+")")
 
     # Crea el directorio de favoritos si no existe
@@ -153,30 +168,21 @@ def savebookmark(canal=CHANNELNAME,titulo="",url="",thumbnail="",server="",plot=
     else:
         filenumber=1
 
-    # Genera el contenido
-    filecontent = ""
-    filecontent = filecontent + urllib.quote_plus(titulo)+'\n'
-    filecontent = filecontent + urllib.quote_plus(url)+'\n'
-    filecontent = filecontent + urllib.quote_plus(thumbnail)+'\n'
-    filecontent = filecontent + urllib.quote_plus(server)+'\n'
-    filecontent = filecontent + urllib.quote_plus(plot)+'\n'
-    filecontent = filecontent + urllib.quote_plus(fulltitle)+'\n'
-    filecontent = filecontent + urllib.quote_plus(canal)+'\n'
 
     # Genera el nombre de fichero
     from core import scrapertools
-    filename = '%08d-%s.txt' % (filenumber,scrapertools.slugify(fulltitle))
+    filename = '%08d-%s.json' % (filenumber,scrapertools.slugify(item.fulltitle))
     logger.info("[favoritos.py] savebookmark filename="+filename)
 
     # Graba el fichero
     if not usingsamba(savepath):
         fullfilename = os.path.join(savepath,filename)
         bookmarkfile = open(fullfilename,"w")
-        bookmarkfile.write(filecontent)
+        bookmarkfile.write(item.tojson())
         bookmarkfile.flush();
         bookmarkfile.close()
     else:
-        samba.write_file(filename, filecontent, savepath)
+        samba.write_file(filename, item.tojson(), savepath)
 
 def deletebookmark(fullfilename,deletepath=BOOKMARK_PATH):
     logger.info("[favoritos.py] deletebookmark(fullfilename="+fullfilename+",deletepath="+deletepath+")")
