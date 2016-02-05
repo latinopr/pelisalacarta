@@ -83,23 +83,25 @@ def title_to_folder_name(title):
     logger.info("Serie="+Serie)
     return Serie
  
-def savelibrary(titulo="",url="",thumbnail="",server="",plot="",canal="",category="Cine",Serie="",verbose=True,accion="play_from_library",pedirnombre=True, subtitle="", extra=""):
-    logger.info("[library.py] savelibrary titulo="+titulo+", url="+url+", server="+server+", canal="+canal+", category="+category+", serie="+Serie+", accion="+accion+", subtitle="+subtitle)
-
-    if category != "Series":  #JUR - DEBUGIN INTERNO PARA 2.14
-        category = "Cine"
+def savelibrary(item,verbose=True,accion="play_from_library",pedirnombre=True):
+    logger.info("[library.py] savelibrary:" + item.tostring())
+    
+    if not "Serie" in item: item.Serie=""
+    
+    if item.category != "Series":  #JUR - DEBUGIN INTERNO PARA 2.14
+        item.category = "Cine"
         
-    if category == "Cine":
-        filename=string.translate(titulo,allchars,deletechars)+".strm"
+    if item.category == "Cine":
+        filename=string.translate(item.title,allchars,deletechars)+".strm"
         fullfilename = os.path.join(MOVIES_PATH,filename)
-    elif category == "Series":
-        if Serie == "": #Añadir comprobación de len>0 bien hecha
+    elif item.category == "Series":
+        if item.Serie == "": #Añadir comprobación de len>0 bien hecha
             logger.info('[library.py] savelibrary ERROR: intentando añadir una serie y serie=""')
             pathserie = SERIES_PATH
         else:
             #Eliminamos caracteres indeseados para archivos en el nombre de la serie
-            Serie = title_to_folder_name(Serie)
-            pathserie = xbmc.translatePath( os.path.join( SERIES_PATH, Serie ) )
+            Serie = title_to_folder_name(item.Serie)
+            pathserie = xbmc.translatePath( os.path.join( SERIES_PATH, item.Serie ) )
         if not os.path.exists(pathserie):
             logger.info("[library.py] savelibrary Creando directorio serie:"+pathserie)
             try:
@@ -109,7 +111,7 @@ def savelibrary(titulo="",url="",thumbnail="",server="",plot="",canal="",categor
 
         #Limpiamos el titulo para usarlo como fichero
         from  core import scrapertools
-        filename = scrapertools.get_season_and_episode(titulo)+".strm"
+        filename = scrapertools.get_season_and_episode(item.title)+".strm"
         #filename=string.translate(titulo,allchars,deletechars)+".strm"
 
         fullfilename = os.path.join(pathserie,filename)
@@ -128,15 +130,16 @@ def savelibrary(titulo="",url="",thumbnail="",server="",plot="",canal="",categor
         logger.info("[library.py] savelibrary Error al grabar el archivo "+fullfilename)
         nuevo = 0
         raise
-#    itemurl = '%s?channel=%s&action=%s&category=%s&title=%s&url=%s&thumbnail=%s&plot=%s&server=%s' % ( sys.argv[ 0 ] , canal , "strm" , urllib.quote_plus( category ) , urllib.quote_plus( titulo ) , urllib.quote_plus( url ) , urllib.quote_plus( thumbnail ) , urllib.quote_plus( plot ) , server )
-# Eliminación de plot y thumnail
-    addon_name = sys.argv[ 0 ]
-    if addon_name.strip()=="":
-        addon_name="plugin://plugin.video.pelisalacarta/"
-    itemurl = '%s?channel=%s&action=%s&category=%s&title=%s&url=%s&thumbnail=%s&plot=%s&server=%s&Serie=%s&subtitle=%s&extra=%s' % ( addon_name , canal , accion , urllib.quote_plus( category ) , urllib.quote_plus( titulo ) , urllib.quote_plus( url ) , "" , "" , server , Serie , urllib.quote_plus(subtitle) , urllib.quote_plus(extra) )
+    item.channel = "library"
+    item.strmfile = True
+    itemurl = '%s?%s' % ( sys.argv[ 0 ] , item.tourl())
     logger.info("[library.py] savelibrary fullfilename=%s , itemurl=%s" % (fullfilename,itemurl))
+    
+    JSONfile  = item.tojson()
+    JSONfile = "#" + '#'.join(JSONfile.splitlines(True))
+    
 
-    LIBRARYfile.write(itemurl)
+    LIBRARYfile.write(itemurl + "\n" + JSONfile)
 #    LIBRARYfile.write(urllib.quote_plus(url)+'\n')
 #    LIBRARYfile.write(urllib.quote_plus(thumbnail)+'\n')
 #    LIBRARYfile.write(urllib.quote_plus(server)+'\n')
@@ -147,6 +150,158 @@ def savelibrary(titulo="",url="",thumbnail="",server="",plot="",canal="",categor
     logger.info("[library.py] savelibrary acaba")
 
     return nuevo
+    
+
+##############################################################################################
+#C�digo para actualizar los strm al nuevo formato de url
+
+def update2json(item, path="", progreso = None):
+    from core.item import Item
+    if path== "": path=LIBRARY_PATH
+    import xbmcgui
+    Main = False
+    if progreso is None: 
+      Main = True
+      progreso = xbmcgui.DialogProgress()
+      progreso.create("Actualizando Bibliotreca.." , "Entrando en directorio: " + path)
+      
+    logger.info("Entrando en directorio: " + path)
+    for file in os.listdir(path):
+      if os.path.isdir(os.path.join(path,file)):
+        logger.info("Directorio: " + os.path.join(path,file))
+        progreso.create("Actualizando Bibliotreca.." , "Entrando en directorio: " + os.path.join(path,file))
+        update2json(item,os.path.join(path,file), progreso)
+      else:
+        logger.info("Archivo: " + os.path.join(path,file))
+        
+        if file.endswith(".strm"):
+          progreso.create("Actualizando Bibliotreca.." , "Actualizando: " + os.path.join(path,file))
+          strm= open(os.path.join(path,file), "rb").read()
+          
+          item = extract_parameters(strm)
+          logger.info(item.tostring())
+          logger.info(Item().tostring())
+          #Si el item es igual a un item en blanco, significa que no se ha podido extraer los parametros,
+          #lo cual quiere decir que probablemente ya esta actualizado, por tanto se omite
+          if not item.tourl() == Item().tourl():
+            open(os.path.join(path,file), "wb").write(sys.argv[0] + "?" + item.tourl())
+    if Main == True:        
+      progreso.close()
+      xbmcgui.Dialog().ok("Actualizando Bibliotreca..","Actualizaci�n terminada...")
+        
+
+def get_params(strm):
+    logger.info("get_params")
+    
+    param_string = strm.split("?")[1]
+    
+    logger.info("get_params "+str(param_string))
+    
+    commands = {}
+
+    if param_string:
+        split_commands = param_string[param_string.find('?') + 1:].split('&')
+    
+        for command in split_commands:
+            logger.info("get_params command="+str(command))
+            if len(command) > 0:
+                if "=" in command:
+                    split_command = command.split('=')
+                    key = split_command[0]
+                    value = split_command[1] #urllib.unquote_plus()
+                    commands[key] = value
+                else:
+                    commands[command] = ""
+    
+    logger.info("get_params "+repr(commands))
+    return commands
+
+# Extract parameters from sys.argv
+def extract_parameters(strm):
+    from core.item import Item
+    item = Item()
+    params = get_params(strm)
+
+
+    if (params.has_key("channel")):
+        item.channel = urllib.unquote_plus( params.get("channel") )
+
+    
+    # Extrae la url de la p?na
+    if (params.has_key("url")):
+        item.url = urllib.unquote_plus( params.get("url") )
+
+
+    # Extrae la accion
+    if (params.has_key("action")):
+        item.action = params.get("action")
+
+
+    # Extrae el server
+    if (params.has_key("server")):
+        item.server = params.get("server")
+ 
+
+    # Extrae la categoria
+    if (params.has_key("category")):
+        item.category = urllib.unquote_plus( params.get("category") )
+
+            
+    # Extrae el t?lo de la serie
+    if (params.has_key("show")):
+        item.show = params.get("show")
+
+
+    # Extrae el t?lo del video
+    if params.has_key("title"):
+        item.title = urllib.unquote_plus( params.get("title") )
+
+
+    # Extrae el t?lo del video
+    if params.has_key("fulltitle"):
+        item.fulltitle = urllib.unquote_plus( params.get("fulltitle") )
+
+
+    if params.has_key("thumbnail"):
+        item.thumbnail = urllib.unquote_plus( params.get("thumbnail") )
+
+
+    if params.has_key("fanart"):                                                                                                                                                
+        item.fanart = urllib.unquote_plus( params.get("fanart") )                                                                                                                  
+
+
+    if params.has_key("plot"):
+        item.plot = urllib.unquote_plus( params.get("plot") )
+
+
+    if params.has_key("extradata"):
+        item.extra = urllib.unquote_plus( params.get("extradata") )
+
+
+    if params.has_key("subtitle"):
+        item.subtitle = urllib.unquote_plus( params.get("subtitle") )
+
+
+    if params.has_key("viewmode"):
+        item.viewmode = urllib.unquote_plus( params.get("viewmode") )
+
+
+    if params.has_key("password"):
+        item.password = urllib.unquote_plus( params.get("password") )
+
+
+    if params.has_key("show"):
+        item.show = urllib.unquote_plus( params.get("show") )
+    else:
+        if params.has_key("Serie"):
+            item.show = urllib.unquote_plus( params.get("Serie") )
+
+    return item
+
+############################################################################################  
+#fin de codigo para actualizar strm al nuevo formato de url
+
+
     
 def update(total,errores=0, nuevos=0, serie="No indicada"):
     logger.info("[library.py] update")
