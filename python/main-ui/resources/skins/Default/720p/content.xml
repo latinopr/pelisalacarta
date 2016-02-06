@@ -118,7 +118,7 @@
 
         <control type="label">
           <posx>160</posx><posy>45</posy>
-          <width>729</width><height>34</height>
+          <width>680</width><height>34</height>
           <font>font14</font>
           <textcolor>FFFFFFFF</textcolor>
           <align>left</align>
@@ -145,7 +145,7 @@
 
         <control type="label">
           <posx>160</posx><posy>45</posy>
-          <width>611</width><height>34</height>
+          <width>680</width><height>34</height>
           <font>font14</font>
           <textcolor>FFFFFFFF</textcolor>
           <align>left</align>

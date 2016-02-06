@@ -28,13 +28,13 @@
 <project name="pelisalacarta" default="package">
 	<description>pelisalacarta</description>
 
-    <property name="oldversion" value="4.0.5"/>
-    <property name="oldversionboxee" value="10.17"/>
-    <property name="oldversiondate" value="20/12/2015"/>
+    <property name="oldversion" value="4.0.6"/>
+    <property name="oldversionboxee" value="10.18"/>
+    <property name="oldversiondate" value="14/01/2016"/>
 
-    <property name="version" value="4.0.6"/>
-    <property name="versionboxee" value="10.18"/>
-    <property name="versiondate" value="08/01/2018"/>
+    <property name="version" value="4.0.7"/>
+    <property name="versionboxee" value="10.19"/>
+    <property name="versiondate" value="06/02/2016"/>
     <property name="versionchanges" value="Versión semanal"/>
 
     <property name="target" value="../../target/python"/>
@@ -57,8 +57,9 @@
     <!-- package =============================================== -->
     <target name="package" depends="clean" description="Builds a package for each platform">
 
+        <antcall target="copy-kodi-16-jarvis"/>
+        <antcall target="copy-kodi-16-jarvis-ui"/>
         <antcall target="copy-kodi-15-isengard"/>
-        <antcall target="copy-kodi-15-isengard-ui"/>
         <antcall target="copy-kodi-14-helix"/>
         <antcall target="copy-xbmc-13-gotham"/>
         <antcall target="copy-xbmc-12-frodo"/>
@@ -83,15 +84,33 @@
     <!-- upload =============================================== -->
     <target name="upload" description="Upload zip files to the web server">
 
-        <echo message="Subiendo pelisalacarta-kodi-15-isengard-${version}.zip"/>
+        <echo message="Subiendo pelisalacarta-kodi-16-jarvis-${version}.zip"/>
         <exec executable="scp">
-            <arg value="${target}/kodi-15-isengard/pelisalacarta-kodi-isengard-${version}.zip"/>
+            <arg value="${target}/kodi-16-jarvis/pelisalacarta-kodi-jarvis-${version}.zip"/>
+            <arg value="${ruta_remota_descargas}"/>
+        </exec>
+
+        <echo message="Subiendo pelisalacarta-kodi-16-jarvis-ui-${version}.zip"/>
+        <exec executable="scp">
+            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-jarvis-${version}.zip"/>
             <arg value="${ruta_remota_descargas}"/>
         </exec>
 
         <echo message="Subiendo pelisalacarta-kodi-15-isengard-ui-${version}.zip"/>
         <exec executable="scp">
-            <arg value="${target}/kodi-15-isengard-ui/pelisalacarta-ui-kodi-isengard-${version}.zip"/>
+            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-isengard-${version}.zip"/>
+            <arg value="${ruta_remota_descargas}"/>
+        </exec>
+
+        <echo message="Subiendo pelisalacarta-kodi-14-helix-ui-${version}.zip"/>
+        <exec executable="scp">
+            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-helix-${version}.zip"/>
+            <arg value="${ruta_remota_descargas}"/>
+        </exec>
+
+        <echo message="Subiendo pelisalacarta-kodi-15-isengard-${version}.zip"/>
+        <exec executable="scp">
+            <arg value="${target}/kodi-15-isengard/pelisalacarta-kodi-isengard-${version}.zip"/>
             <arg value="${ruta_remota_descargas}"/>
         </exec>
 
@@ -190,6 +209,62 @@
         <delete file="pelisalacarta-version.xml"/>
     </target>
 
+    <!-- copy-kodi-16-jarvis ============================================================ -->
+    <target name="copy-kodi-16-jarvis">
+
+        <mkdir dir="${target}/kodi-16-jarvis/plugin.video.pelisalacarta"/>
+
+        <copy todir="${target}/kodi-16-jarvis/plugin.video.pelisalacarta">
+            <fileset dir="main-classic">
+                <exclude name="**/.*"/>
+                <exclude name="**/.*/**"/>
+                <exclude name="**/*.pyo"/>
+                <exclude name="**/*.pyc"/>
+                <exclude name="**/*.json"/>
+                <exclude name="resources/images/bannermenu/**"/>
+                <exclude name="resources/images/banners/**"/>
+                <exclude name="resources/images/fanart/**"/>
+                <exclude name="resources/images/posters/**"/>
+                <exclude name="resources/images/squares/**"/>
+            </fileset>
+        </copy>
+
+        <zip destfile="${target}/kodi-16-jarvis/pelisalacarta-kodi-jarvis-${version}.zip" basedir="${target}/kodi-16-jarvis"/>
+
+    </target>
+
+    <!-- copy-kodi-16-jarvis-ui ============================================================ -->
+    <target name="copy-kodi-16-jarvis-ui">
+
+        <mkdir dir="${target}/kodi-16-jarvis-ui/plugin.video.pelisalacarta-ui"/>
+
+        <copy todir="${target}/kodi-16-jarvis-ui/plugin.video.pelisalacarta-ui">
+            <fileset dir="main-classic">
+                <exclude name="**/.*"/>
+                <exclude name="**/.*/**"/>
+                <exclude name="**/*.pyo"/>
+                <exclude name="**/*.pyc"/>
+                <exclude name="**/*.json"/>
+                <exclude name="resources/images/bannermenu/**"/>
+                <exclude name="resources/images/banners/**"/>
+                <exclude name="resources/images/fanart/**"/>
+                <exclude name="resources/images/posters/**"/>
+                <exclude name="resources/images/squares/**"/>
+            </fileset>
+        </copy>
+        <copy overwrite="true" todir="${target}/kodi-16-jarvis-ui/plugin.video.pelisalacarta-ui">
+            <fileset dir="main-ui">
+                <exclude name="**/.*"/>
+                <exclude name="**/.*/**"/>
+            </fileset>
+        </copy>
+
+        <zip destfile="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-jarvis-${version}.zip" basedir="${target}/kodi-16-jarvis-ui"/>
+        <zip destfile="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-isengard-${version}.zip" basedir="${target}/kodi-16-jarvis-ui"/>
+        <zip destfile="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-helix-${version}.zip" basedir="${target}/kodi-16-jarvis-ui"/>
+
+    </target>
+
     <!-- copy-kodi-15-isengard ============================================================ -->
     <target name="copy-kodi-15-isengard">
 
@@ -211,36 +286,6 @@
         </copy>
 
         <zip destfile="${target}/kodi-15-isengard/pelisalacarta-kodi-isengard-${version}.zip" basedir="${target}/kodi-15-isengard"/>
-
-    </target>
-
-    <!-- copy-kodi-15-isengard-ui ============================================================ -->
-    <target name="copy-kodi-15-isengard-ui">
-
-        <mkdir dir="${target}/kodi-15-isengard-ui/plugin.video.pelisalacarta-ui"/>
-
-        <copy todir="${target}/kodi-15-isengard-ui/plugin.video.pelisalacarta-ui">
-            <fileset dir="main-classic">
-                <exclude name="**/.*"/>
-                <exclude name="**/.*/**"/>
-                <exclude name="**/*.pyo"/>
-                <exclude name="**/*.pyc"/>
-                <exclude name="**/*.json"/>
-                <exclude name="resources/images/bannermenu/**"/>
-                <exclude name="resources/images/banners/**"/>
-                <exclude name="resources/images/fanart/**"/>
-                <exclude name="resources/images/posters/**"/>
-                <exclude name="resources/images/squares/**"/>
-            </fileset>
-        </copy>
-        <copy overwrite="true" todir="${target}/kodi-15-isengard-ui/plugin.video.pelisalacarta-ui">
-            <fileset dir="main-ui">
-                <exclude name="**/.*"/>
-                <exclude name="**/.*/**"/>
-            </fileset>
-        </copy>
-
-        <zip destfile="${target}/kodi-15-isengard-ui/pelisalacarta-ui-kodi-isengard-${version}.zip" basedir="${target}/kodi-15-isengard-ui"/>
 
     </target>
 

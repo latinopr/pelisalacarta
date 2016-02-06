@@ -60,7 +60,7 @@
       <font>font10_title</font>
       <textcolor>FFCCCCCC</textcolor>
       <align>right</align>
-      <label>pelisalacarta 4.0.6</label>
+      <label>pelisalacarta 4.0.7</label>
     </control>
 
     <control type="label">
@@ -69,7 +69,7 @@
       <font>font10_title</font>
       <textcolor>FFCCCCCC</textcolor>
       <align>right</align>
-      <label>14/Enero/2015</label>
+      <label>6/Febrero/2016</label>
     </control>
 
     <!-- ---------------------------- -->
@@ -98,11 +98,11 @@
         </control>
 
         <control type="label">
-          <posx>20</posx><posy>45</posy>
+          <posx>35</posx><posy>20</posy>
           <width>855</width><height>81</height>
           <font>font8</font>
-          <textcolor>FFFFFFFF</textcolor>
-          <align>center</align>
+          <textcolor>FF00779F</textcolor>
+          <align>left</align>
           <aligny>center</aligny>
           <info>ListItem.Label</info>
         </control>
@@ -126,11 +126,11 @@
         </control>
 
         <control type="label">
-          <posx>20</posx><posy>45</posy>
-          <width>751</width><height>81</height>
+          <posx>35</posx><posy>20</posy>
+          <width>855</width><height>81</height>
           <font>font8</font>
-          <textcolor>FFFFFFFF</textcolor>
-          <align>center</align>
+          <textcolor>FF00779F</textcolor>
+          <align>left</align>
           <aligny>center</aligny>
           <info>ListItem.Label</info>
         </control>

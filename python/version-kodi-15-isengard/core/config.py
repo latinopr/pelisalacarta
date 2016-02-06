@@ -15,10 +15,9 @@ import os
 import xbmcaddon
 import xbmc
 
-PLATFORM_NAME = "kodi-jarvis"
-print "pelisalacarta.core.config PLATFORM_NAME="+PLATFORM_NAME
+PLATFORM_NAME = "kodi-isengard"
 
-PLUGIN_NAME = "pelisalacarta-ui"
+PLUGIN_NAME = "pelisalacarta"
 __settings__ = xbmcaddon.Addon(id="plugin.video."+PLUGIN_NAME)
 __language__ = __settings__.getLocalizedString
 
@@ -175,7 +174,3 @@ def verify_directories_created():
             shutil.rmtree(old_xbmc_directory)
         except:
             pass
-
-print "pelisalacarta.core.config runtime path = "+get_runtime_path()
-print "pelisalacarta.core.config data path = "+get_data_path()
-print "pelisalacarta.core.config temp path = "+get_temp_file("test")

@@ -232,6 +232,26 @@
     "secure": "true"
   },
   {
+    "id": "hdfullaccount",
+    "label": "Cuenta hdfull",
+    "type": "bool",
+    "default": "false"
+  },
+  {
+    "id": "hdfulluser",
+    "label": "Usuario",
+    "type": "text",
+    "default": ""
+  },
+  {
+    "id": "hdfullpassword",
+    "label": "Password",
+    "type": "text",
+    "option": "hidden",
+    "default": "",
+    "secure": "true"
+  },
+  {
     "id": "personalchannel",
     "label": "Canal personal",
     "type": "bool",
