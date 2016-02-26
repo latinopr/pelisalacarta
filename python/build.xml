@@ -90,24 +90,6 @@
             <arg value="${ruta_remota_descargas}"/>
         </exec>
 
-        <echo message="Subiendo pelisalacarta-kodi-16-jarvis-ui-${version}.zip"/>
-        <exec executable="scp">
-            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-jarvis-${version}.zip"/>
-            <arg value="${ruta_remota_descargas}"/>
-        </exec>
-
-        <echo message="Subiendo pelisalacarta-kodi-15-isengard-ui-${version}.zip"/>
-        <exec executable="scp">
-            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-isengard-${version}.zip"/>
-            <arg value="${ruta_remota_descargas}"/>
-        </exec>
-
-        <echo message="Subiendo pelisalacarta-kodi-14-helix-ui-${version}.zip"/>
-        <exec executable="scp">
-            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-helix-${version}.zip"/>
-            <arg value="${ruta_remota_descargas}"/>
-        </exec>
-
         <echo message="Subiendo pelisalacarta-kodi-15-isengard-${version}.zip"/>
         <exec executable="scp">
             <arg value="${target}/kodi-15-isengard/pelisalacarta-kodi-isengard-${version}.zip"/>
@@ -149,6 +131,37 @@
             <arg value="${target}/xbmc-09-plugin/pelisalacarta-xbmc-plugin-${version}.zip"/>
             <arg value="${ruta_remota_descargas}"/>
         </exec>
+
+
+
+
+        <echo message="Subiendo pelisalacarta-kodi-16-jarvis-ui-${version}.zip"/>
+        <exec executable="scp">
+            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-jarvis-${version}.zip"/>
+            <arg value="${ruta_remota_descargas}"/>
+        </exec>
+
+        <echo message="Subiendo pelisalacarta-kodi-15-isengard-ui-${version}.zip"/>
+        <exec executable="scp">
+            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-isengard-${version}.zip"/>
+            <arg value="${ruta_remota_descargas}"/>
+        </exec>
+
+        <echo message="Subiendo pelisalacarta-kodi-14-helix-ui-${version}.zip"/>
+        <exec executable="scp">
+            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-helix-${version}.zip"/>
+            <arg value="${ruta_remota_descargas}"/>
+        </exec>
+
+        <echo message="Subiendo pelisalacarta-xbmc-13-gotham-ui-${version}.zip"/>
+        <exec executable="scp">
+            <arg value="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-xbmc-gotham-${version}.zip"/>
+            <arg value="${ruta_remota_descargas}"/>
+        </exec>
+
+
+
+
 
         <echo message="Subiendo pelisalacarta-boxee-${version}.zip"/>
         <exec executable="scp">
@@ -262,6 +275,7 @@
         <zip destfile="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-jarvis-${version}.zip" basedir="${target}/kodi-16-jarvis-ui"/>
         <zip destfile="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-isengard-${version}.zip" basedir="${target}/kodi-16-jarvis-ui"/>
         <zip destfile="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-kodi-helix-${version}.zip" basedir="${target}/kodi-16-jarvis-ui"/>
+        <zip destfile="${target}/kodi-16-jarvis-ui/pelisalacarta-ui-xbmc-gotham-${version}.zip" basedir="${target}/kodi-16-jarvis-ui"/>
 
     </target>
 
