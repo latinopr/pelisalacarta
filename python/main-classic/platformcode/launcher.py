@@ -24,10 +24,53 @@ def start():
     # Test if all the required directories are created
     config.verify_directories_created()
 
+<<<<<<< HEAD
 def run(item):
     itemlist = []
     #Muestra el item en el log:
     PrintItems(item)
+=======
+                elif action=="strm_detail" or action=="play_from_library":
+                    logger.info("pelisalacarta.platformcode.launcher play_from_library")
+
+                    fulltitle = item.show + " " + item.title
+                    elegido = Item(url="")                    
+
+                    logger.info("item.server=#"+item.server+"#")
+                    # Ejecuta find_videos, del canal o común
+                    if item.server != "":
+                        try:
+                            from servers import servertools
+                            videourls = servertools.resolve_video_urls_for_playing(server=item.server, url=item.url, video_password=item.video_password)
+                            return videourls
+                        except:
+                            itemlist = []
+                            pass						
+                    else:
+                        try:
+                            itemlist = channel.findvideos(item)
+                            if config.get_setting('filter_servers') == 'true':
+                                itemlist = filtered_servers(itemlist, server_white_list, server_black_list) 
+                        except:
+                            from servers import servertools
+                            itemlist = servertools.find_video_items(item)
+                            if config.get_setting('filter_servers') == 'true':
+                                itemlist = filtered_servers(itemlist, server_white_list, server_black_list)
+
+                    if len(itemlist)>0:
+                        #for item2 in itemlist:
+                        #    logger.info(item2.title+" "+item2.subtitle)
+    
+                        # El usuario elige el mirror
+                        opciones = []
+                        for item in itemlist:
+                            opciones.append(item.title)
+                    
+                        import xbmcgui
+                        dia = xbmcgui.Dialog()
+                        seleccion = dia.select(config.get_localized_string(30163), opciones)
+                        elegido = itemlist[seleccion]
+>>>>>>> master
     
     #Control Parental, comprueba si es adulto o no
     if item.action=="mainlist":
