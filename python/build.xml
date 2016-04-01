@@ -7,8 +7,6 @@
  Distributed under the terms of GNU General Public License v3 (GPLv3)
  http://www.gnu.org/licenses/gpl-3.0.html
 
-
-
  This file is part of pelisalacarta 4.
 
  pelisalacarta 4 is free software: you can redistribute it and/or modify
@@ -28,14 +26,14 @@
 <project name="pelisalacarta" default="package">
 	<description>pelisalacarta</description>
 
-    <property name="oldversion" value="4.0.6"/>
-    <property name="oldversionboxee" value="10.18"/>
-    <property name="oldversiondate" value="14/01/2016"/>
+    <property name="oldversion" value="4.0.7"/>
+    <property name="oldversionboxee" value="10.19"/>
+    <property name="oldversiondate" value="06/02/2016"/>
 
-    <property name="version" value="4.0.7"/>
-    <property name="versionboxee" value="10.19"/>
-    <property name="versiondate" value="06/02/2016"/>
-    <property name="versionchanges" value="Versión semanal"/>
+    <property name="version" value="4.0.8"/>
+    <property name="versionboxee" value="10.20"/>
+    <property name="versiondate" value="01/04/2016"/>
+    <property name="versionchanges" value="Varios cambios"/>
 
     <property name="target" value="../../target/python"/>
     <property file='${user.home}/build.properties'/>

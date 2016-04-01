@@ -49,7 +49,6 @@ def getmainlist(preferred_thumb=""):
     itemlist.append( Item(title=config.get_localized_string(30104) , channel="ayuda" , action="mainlist", thumbnail = urlparse.urljoin(get_thumbnail_path(preferred_thumb),"thumb_ayuda.png")) )
     return itemlist
 
-
 def channeltypes(item):
     return getchanneltypes()
     
@@ -123,8 +122,6 @@ def getchanneltypes(preferred_thumb=""):
                                                             "thumb_canales_"+channel_type+".png")))
 
     return itemlist
-
-
 
 def listchannels(item):
     return filterchannels(item.category)
@@ -205,24 +202,3 @@ def filterchannels(category,preferred_thumb=""):
         channelslist.insert( 0 , Item( title="Tengo una URL"  ,action="mainlist", channel="tengourl" , thumbnail=channel_parameters["thumbnail"], type="generic"  ))
 
     return channelslist
-
-
-def get_thumbnail_path(preferred_thumb=""):
-
-    WEB_PATH = ""
-    
-    if preferred_thumb=="":
-        thumbnail_type = config.get_setting("thumbnail_type")
-        if thumbnail_type=="":
-            thumbnail_type="2"
-
-        if thumbnail_type=="0":
-            WEB_PATH = "http://media.tvalacarta.info/pelisalacarta/posters/"
-        elif thumbnail_type=="1":
-            WEB_PATH = "http://media.tvalacarta.info/pelisalacarta/banners/"
-        elif thumbnail_type=="2":
-            WEB_PATH = "http://media.tvalacarta.info/pelisalacarta/squares/"
-    else:
-        WEB_PATH = "http://media.tvalacarta.info/pelisalacarta/"+preferred_thumb+"/"
-
-    return WEB_PATH

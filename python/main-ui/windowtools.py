@@ -46,3 +46,4 @@ ACTION_PREVIOUS_MENU2  = 92 #'Back'
 ACTION_CONTEXT_MENU    = 117 # pops up the context menu
 ACTION_CONTEXT_MENU2   = 229 # pops up the context menu (remote control "title" button)
 ACTION_TOUCH_TAP = 401
+ACTION_NOOP = 999

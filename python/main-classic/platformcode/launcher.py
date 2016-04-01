@@ -95,9 +95,7 @@ def run(item):
     # 2. la función no ha generado resultados y por tanto el itemlist contiene 0 items, itemlist = []
     # 3. la función realiza alguna accion con la cual no se generan nuevos items, en ese caso el resultado deve ser: itemlist = None para que no modifique el listado
     #A partir de aquí ya se ha ejecutado la funcion en el lugar adecuado, si queremos realizar alguna acción sobre los resultados, este es el lugar.
-          
-    
-     
+
     #Filtrado de Servers      
     if item.action== "findvideos" and config.get_setting('filter_servers') == 'true': 
       server_white_list, server_black_list = set_server_list() 

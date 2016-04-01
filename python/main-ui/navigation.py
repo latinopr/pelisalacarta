@@ -88,7 +88,7 @@ def get_next_items( item ):
 
                         # FIXME: Este error ha que tratarlo de otra manera, al dar a volver sin ver el vídeo falla
                         try:
-                            xbmctools.play_video(channel=item.channel, server=item.server, url=item.url, category=item.category, title=item.title, thumbnail=item.thumbnail, plot=item.plot, extra=item.extra, subtitle=item.subtitle, video_password = item.password, fulltitle=item.fulltitle, Serie=item.show, hasContentDetails=item.hasContentDetails, contentTitle=item.contentTitle, contentThumbnail=item.contentThumbnail, contentPlot=item.contentPlot)
+                            xbmctools.play_video(item)
                         except:
                             pass
 
@@ -102,8 +102,10 @@ def get_next_items( item ):
                     # FIXME: Este error ha que tratarlo de otra manera, por al dar a volver sin ver el vídeo falla
                     # Mejor hacer el play desde la ventana
                     try:
-                        xbmctools.play_video(channel=item.channel, server=item.server, url=item.url, category=item.category, title=item.title, thumbnail=item.thumbnail, plot=item.plot, extra=item.extra, subtitle=item.subtitle, video_password = item.password, fulltitle=item.fulltitle, Serie=item.show, hasContentDetails=item.hasContentDetails, contentTitle=item.contentTitle, contentThumbnail=item.contentThumbnail, contentPlot=item.contentPlot)
+                        xbmctools.play_video(item)
                     except:
+                        import traceback
+                        plugintools.log(traceback.format_exc())
                         pass
 
                 return []
